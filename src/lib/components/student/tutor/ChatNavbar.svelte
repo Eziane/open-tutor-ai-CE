@@ -26,8 +26,10 @@
 	import AdjustmentsHorizontal from '../../icons/AdjustmentsHorizontal.svelte';
 	import ChatBubbleOval from '../../icons/ChatBubbleOval.svelte';
 	import User from '../../icons/User.svelte';
+	import Sparkles from '../../icons/Sparkles.svelte';
 
 	import PencilSquare from '../../icons/PencilSquare.svelte';
+	import GenerateFromChatModal from '../flashcards/GenerateFromChatModal.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -43,9 +45,15 @@
 
 	let showShareChatModal = false;
 	let showDownloadChatModal = false;
+	let showGenerateFlashcardsModal = false;
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
+<GenerateFromChatModal
+	bind:show={showGenerateFlashcardsModal}
+	{chat}
+	initialModel={Array.isArray(selectedModels) ? selectedModels[0] ?? '' : ''}
+/>
 
 <nav class="sticky top-0 z-30 w-full px-1.5 py-1.5 -mb-8 flex items-center drag-region">
 	<div
@@ -82,6 +90,20 @@
 					<ModelSelector bind:selectedModels showSetDefault={!shareEnabled} />
 				{/if}
 			</div>
+
+			<!-- "Generate flashcards from this chat" — Sprint 3 -->
+			{#if !!chat?.id}
+				<Tooltip content={$i18n.t('Generate flashcards from this chat')}>
+					<button
+						type="button"
+						on:click={() => (showGenerateFlashcardsModal = true)}
+						class="mr-1 p-2 rounded-xl text-gray-600 hover:text-blue-600 hover:bg-blue-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-blue-900/30 transition-colors"
+						aria-label={$i18n.t('Generate flashcards from this chat')}
+					>
+						<Sparkles className="size-5" strokeWidth="1.75" />
+					</button>
+				</Tooltip>
+			{/if}
 
 			<!-- Center section with avatar toggle - Responsive for all devices -->
 			{#if shareEnabled || !!chat?.id}
